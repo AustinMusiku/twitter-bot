@@ -1,15 +1,24 @@
 {
   "name": "twitterbot",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "run": "node index"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^8.2.0",
     "twit": "^2.2.11"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MusikuAustin/twitter-bot.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MusikuAustin/twitter-bot/issues"
+  },
+  "homepage": "https://github.com/MusikuAustin/twitter-bot#readme",
+  "description": ""
 }
