@@ -12,11 +12,11 @@ let config = {
 
 const T = new twit(config)
 
-let getTweets = ()=>{
+let getTweets = (search, i) => {
     return new Promise((res, rej)=>{
         let params = {
-            q: 'wizkid',
-            count: 0
+            q: search,
+            count: i
         };
         T.get('search/tweets', params, (err, data)=>{
             if(err){
@@ -28,19 +28,29 @@ let getTweets = ()=>{
 }
 
 let postTweet = (tweet) => {
+    let params = {
+        status: tweet
+    }
     return new Promise((res, rej) => {
-        T.post('statuses/update', tweet, callback);
+        T.post('statuses/update', params, callback);
         function callback(err, data, response){
             err? rej(err) : res(data);
         }
     })
 }
 
-let param = {
-    status: 'test2'
-}
 
-postTweet(param)
-    .then(data => {
-        console.log(data);
-    })
+// set up a stream that will
+// listen for kot5aside tweets
+// const stream = T.stream('statuses/filter', {track: 'KOT5Aside'});
+// stream.on('tweet', (event) => {
+//     console.log("new follower");
+//     console.log(event)
+// });
+
+// setup stream that
+// listens to user follows
+const followStream = T.stream('user');
+followStream.on('favorite', (event) => {
+    console.log(event);
+});
