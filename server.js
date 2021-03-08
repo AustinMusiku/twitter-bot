@@ -4,10 +4,12 @@ const twit = require('twit');
 // instantiate app
 let app = express();
 
+// ROUTES
+
+// new follow
 app.post('/follow', (req, res) => {
     console.log(req);
 })
-
 
 
 
