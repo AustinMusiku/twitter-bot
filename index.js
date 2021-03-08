@@ -39,6 +39,20 @@ let postTweet = (tweet) => {
     })
 }
 
+// ACCOUNT ACTIVITY API
+ let follows = () => {
+     return new Promise((res, rej) => {
+        let params = {
+            url: 'https://twitter-bot47.herokuapp.com/twitter'
+        }
+        T.post('https://api.twitter.com/1.1/account_activity/all/:env_name/webhooks.json', params, (err, data) => {
+            err? rej(err) : res(data);
+        })
+     })
+ }
+
+
+// STREAMS
 
 // set up a stream that will
 // listen for kot5aside tweets
@@ -54,3 +68,4 @@ const followStream = T.stream('user');
 followStream.on('favorite', (event) => {
     console.log(event);
 });
+
