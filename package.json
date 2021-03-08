@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "run": "node index"
+    "run": "node index",
+    "server": "nodemon server"
   },
   "author": "",
   "license": "ISC",
