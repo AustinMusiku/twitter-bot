@@ -1,14 +1,15 @@
+const express = require('express');
 const path = require('path')
 const twit = require('twit')
 const dotenv = require('dotenv')
+
 dotenv.config({path: './config.env'})
 
-let config = {
-    consumer_key : process.env.CONSUMER_KEY,
-    consumer_secret: process.env.CONSUMER_SECRET,
-    access_token: process.env.ACCESS_TOKEN,
-    access_token_secret: process.env.ACCESS_TOKEN_SECRET
-};
+let app = express();
+app.use(express.json())
+app.use(express.urlencoded({extended: false}))
+
+let config = require('./config/config')
 
 const T = new twit(config)
 
@@ -39,17 +40,6 @@ let postTweet = (tweet) => {
     })
 }
 
-// ACCOUNT ACTIVITY API
- let follows = () => {
-     return new Promise((res, rej) => {
-        let params = {
-            url: 'https://twitter-bot47.herokuapp.com/twitter'
-        }
-        T.post('https://api.twitter.com/1.1/account_activity/all/:env_name/webhooks.json', params, (err, data) => {
-            err? rej(err) : res(data);
-        })
-     })
- }
 
 
 // STREAMS
@@ -62,10 +52,4 @@ let postTweet = (tweet) => {
 //     console.log(event)
 // });
 
-// setup stream that
-// listens to user follows
-const followStream = T.stream('user');
-followStream.on('favorite', (event) => {
-    console.log(event);
-});
 
