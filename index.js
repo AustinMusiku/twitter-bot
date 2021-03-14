@@ -3,15 +3,13 @@ const path = require('path')
 const twit = require('twit')
 const dotenv = require('dotenv')
 
-dotenv.config({path: './config.env'})
-
-let app = express();
-app.use(express.json())
-app.use(express.urlencoded({extended: false}))
+dotenv.config()
 
 let config = require('./config/config')
 
 const T = new twit(config)
+
+// ###### GET TWEETS ######
 
 let getTweets = (search, i) => {
     return new Promise((res, rej)=>{
@@ -28,6 +26,8 @@ let getTweets = (search, i) => {
     })
 }
 
+// ###### POST TWEETS ######
+
 let postTweet = (tweet) => {
     let params = {
         status: tweet
@@ -42,14 +42,20 @@ let postTweet = (tweet) => {
 
 
 
-// STREAMS
+// ###### STREAMS ######
 
 // set up a stream that will
-// listen for kot5aside tweets
-// const stream = T.stream('statuses/filter', {track: 'KOT5Aside'});
-// stream.on('tweet', (event) => {
-//     console.log("new follower");
-//     console.log(event)
-// });
+// listen for @MusikuAustin mentions
+
+const stream = T.stream('statuses/filter', { track: '@MusikuAustin' });
+stream.on('tweet', (tweet) => {
+    try{
+        console.log("new mention");
+        console.log(tweet)
+    }catch(error){
+        console.log(error)
+    }
+});
+
 
 
