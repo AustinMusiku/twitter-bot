@@ -3,11 +3,19 @@ const path = require('path')
 const twit = require('twit')
 const dotenv = require('dotenv')
 
-dotenv.config()
+// set up server
+const app = express();
+app.listen(process.env.PORT, () => {
+    console.log(`listening on port 3000`)
+})
 
+dotenv.config()
 let config = require('./config/config')
 
+app.use(express.json());
+
 const T = new twit(config)
+const client = require('twilio')(process.env.TWILIO_ACC_SID, process.env.TWILIO_AUTH_TOKEN);
 
 // ###### GET TWEETS ######
 
@@ -46,16 +54,33 @@ let postTweet = (tweet) => {
 
 // set up a stream that will
 // listen for @MusikuAustin mentions
+// and sends alert to whatsapp number
 
 const stream = T.stream('statuses/filter', { track: '@MusikuAustin' });
 stream.on('tweet', (tweet) => {
     try{
         console.log("new mention");
         console.log(tweet)
+
+        client.messages 
+            .create({ 
+               body: 'new mention', 
+               from: 'whatsapp:+14155238886',       
+               to: 'whatsapp:+254100901994' 
+            })
+            .then( message => console.log(message))
+            .done();
+
     }catch(error){
         console.log(error)
     }
 });
 
 
+app.post('/twitterMention/status', (req, res) => {
+    console.log(req.body);
+})
 
+app.post('/twitterMention', (req, res) => {
+    console.log(req.body);
+})
