@@ -10,9 +10,11 @@ dotenv.config()
 let config = require('./config/config')
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }))
 
 const T = new twit(config)
 const client = require('twilio')(process.env.TWILIO_ACC_SID, process.env.TWILIO_AUTH_TOKEN);
+const MessagingResponse = require('twilio').twiml.MessagingResponse;
 
 // ###### GET TWEETS ######
 
@@ -47,8 +49,7 @@ let postTweet = (tweet) => {
 
 
 
-// ###### STREAMS ######
-
+// ###### STREAM ######
 // set up a stream that will
 // listen for @MusikuAustin mentions
 // and sends alert to whatsapp number
@@ -81,20 +82,24 @@ stream.on('tweet', (tweet) => {
     }
 });
 
-
-
-app.post('/twitterMention/status', (req, res) => {
-    console.log('webhook /twitterMention/status');
-    console.log(req.body);
-    res.end();
-})
-
+// ###### respond to messages; Handle webhook post requests ######
+ 
 app.post('/twitterMention', (req, res) => {
     console.log('webhook /twitterMention');
-    console.log(req.body);
-    res.send({
-        'status': 'OK'
-    });
+    console.log(req.body.Body);
+    const twiml = new MessagingResponse;
+    twiml
+        .message('got message')
+        .media('https://www.bing.com/th?id=OIP.2nh7jNX2qm4XeSxbbU_NYwHaEK&w=249&h=160&c=8&rs=1&qlt=90&pid=3.1&rm=2');
+    res.writeHead(200, {'Content-Type': 'text/xml'});
+    res.end(twiml.toString());
+})
+
+app.post('/twitterMention/status', (req, res) => {
+    let status = req.body.EventType || req.body.MessageStatus;
+    console.log('webhook /twitterMention/status');
+    console.log(status);
+    res.end();
 })
 
 app.get('/', (req, res) => {
