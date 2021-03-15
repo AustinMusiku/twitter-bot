@@ -5,9 +5,6 @@ const dotenv = require('dotenv')
 
 // set up server
 const app = express();
-app.listen(process.env.PORT, () => {
-    console.log(`listening on port 3000`)
-})
 
 dotenv.config()
 let config = require('./config/config')
@@ -61,14 +58,22 @@ stream.on('tweet', (tweet) => {
     try{
         console.log("new mention");
         console.log(tweet)
-
+        // get and format time of tweet
+        let date = new Date(parseInt(tweet.timestamp_ms));
+        let hr = date.getHours();
+        let min = date.getMinutes();
+        let day = date.getDay();
+        let month = date.getMonth();
+        let months = ['January','February','March','April','May','June','July','August','September','October','November','December']
+        let year = date.getFullYear();
+ // march 3, 2021
         client.messages 
             .create({ 
-               body: 'new mention', 
+               body: `@${tweet.user.screen_name} mentioned you in a tweet\n\n${tweet.text}\n\ntweeted at ${hr}:${min} on ${months[month]} ${day}, ${year}`, 
                from: `whatsapp:+${process.env.TWILIO_NO}`,       
                to: `whatsapp:+${process.env.WHATSAPP_NO}` 
             })
-            .then( message => console.log(message))
+            .then( message => console.log(message.sid))
             .done();
 
     }catch(error){
@@ -77,10 +82,27 @@ stream.on('tweet', (tweet) => {
 });
 
 
+
 app.post('/twitterMention/status', (req, res) => {
+    console.log('webhook /twitterMention/status');
     console.log(req.body);
+    res.end();
 })
 
 app.post('/twitterMention', (req, res) => {
+    console.log('webhook /twitterMention');
     console.log(req.body);
+    res.send({
+        'status': 'OK'
+    });
+})
+
+app.get('/', (req, res) => {
+    res.status(200).send({
+        "name": "twitterMention"
+    })
+})
+
+app.listen(process.env.PORT, () => {
+    console.log(`listening on port 3000`)
 })
