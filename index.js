@@ -65,8 +65,8 @@ stream.on('tweet', (tweet) => {
         client.messages 
             .create({ 
                body: 'new mention', 
-               from: 'whatsapp:+14155238886',       
-               to: 'whatsapp:+254100901994' 
+               from: `whatsapp:+${process.env.TWILIO_NO}`,       
+               to: `whatsapp:+${process.env.WHATSAPP_NO}` 
             })
             .then( message => console.log(message))
             .done();
