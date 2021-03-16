@@ -1,4 +1,4 @@
 node_modules/
 accountActivityApi/
 
-config.env
+.env
