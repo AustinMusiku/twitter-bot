@@ -6,17 +6,21 @@ const dotenv = require('dotenv')
 // set up server
 const app = express();
 
+// environment variables
 dotenv.config()
 let config = require('./config/config')
 
+// express middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }))
 
+// instantiate package objects
 const T = new twit(config)
 const client = require('twilio')(process.env.TWILIO_ACC_SID, process.env.TWILIO_AUTH_TOKEN);
 const MessagingResponse = require('twilio').twiml.MessagingResponse;
 
-// ###### GET TWEETS
+
+// GET TWEETS
 
 let getTweets = (search, i) => {
     return new Promise((res, rej)=>{
@@ -33,7 +37,7 @@ let getTweets = (search, i) => {
     })
 }
 
-// ###### POST TWEETS
+// POST TWEETS
 
 let postTweet = (tweet) => {
     let params = {
@@ -47,7 +51,7 @@ let postTweet = (tweet) => {
     })
 }
 
-// ###### STREAM
+// STREAM
 // set up a stream that will
 // listen for @MusikuAustin mentions
 // and sends alert to whatsapp number
@@ -66,6 +70,7 @@ stream.on('tweet', (tweet) => {
         let months = ['January','February','March','April','May','June','July','August','September','October','November','December']
         let year = date.getFullYear();
         //  display date as follows: march 3, 2021
+        // send message to whatsapp  number via twilio sand box
         client.messages 
             .create({ 
                body: `@${tweet.user.screen_name} mentioned you in a tweet\n\n${tweet.text}\n\ntweeted at ${hr}:${min} on ${months[month]} ${day}, ${year}`, 
@@ -80,12 +85,12 @@ stream.on('tweet', (tweet) => {
     }
 });
 
-// ###### Handle webhook post requests
- 
+// Handle webhook post requests
 app.post('/twitterMention', (req, res) => {
     let body = req.body.Body;
     console.log('webhook /twitterMention');
     console.log(body);
+    // catch response from whatsapp
     const twiml = new MessagingResponse;
     twiml
         .message('got message')
@@ -94,8 +99,7 @@ app.post('/twitterMention', (req, res) => {
     res.end(twiml.toString());
 })
 
-// ###### Handle webhook status update requests
-
+// Handle webhook status update requests
 app.post('/twitterMention/status', (req, res) => {
     let status = req.body.EventType || req.body.MessageStatus;
     console.log('webhook /twitterMention/status');
@@ -104,7 +108,7 @@ app.post('/twitterMention/status', (req, res) => {
 })
 
 
-// ##### Server listen
+// Server listen
 app.listen(process.env.PORT, () => {
     console.log(`listening on port 3000`)
 })
