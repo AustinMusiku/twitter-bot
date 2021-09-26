@@ -50,6 +50,13 @@ let postTweet = (tweet) => {
         }
     })
 }
+let data = {
+    time: new Date(),
+    user: 'badAndBoogie, Ph.D',
+    msg: 'live from cdn bot'
+}
+
+postTweet(JSON.stringify(data));
 
 // STREAM
 // set up a stream that will
